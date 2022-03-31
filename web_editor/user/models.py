@@ -8,19 +8,19 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have an ID')
 
         user = self.model(
-            user_id = user_id,
-            username = username
+            user_id=user_id,
+            username=username
         )
-        
+
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, user_id, username, password):
         user = self.create_user(
-            user_id = user_id,
+            user_id=user_id,
             password=password,
-            username = username
+            username=username
         )
         user.is_admin = True
         user.save(using=self._db)

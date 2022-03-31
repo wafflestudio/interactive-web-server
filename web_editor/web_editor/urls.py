@@ -18,5 +18,5 @@ from .ping import ping
 
 urlpatterns = [
     path('ping/', ping),
-    path('user/', include('user.urls'))
+    path('api/v1/users/', include('user.urls'))
 ]

@@ -9,17 +9,19 @@ from rest_framework.viewsets import GenericViewSet
 from .serializer import *
 from .models import User
 
+
 class UserCreateViewSet(GenericViewSet):
     serializer_class = UserCreateSerializer
-    
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
             user = serializer.save()
-            return Response(data = {'user' : self.get_serializer(user).data}, status=status.HTTP_201_CREATED)
+            return Response(data={'user': self.get_serializer(user).data}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response(data=e, status=400)
+
 
 class UserLoginViewSet(APIView):
     def post(self, request, *args, **kwargs):
