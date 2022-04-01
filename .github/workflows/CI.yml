@@ -39,7 +39,7 @@ jobs:
     - name: Verify MySQL connection
       run: |
         sudo service mysql start
-        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        mysql -e 'CREATE DATABASE ${{ env.DB_NAME }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
         mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
         
     - name: Create secret.json file
