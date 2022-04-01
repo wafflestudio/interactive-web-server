@@ -1,0 +1,44 @@
+name: Django CI
+
+on:
+  push:
+    branches: 
+      - '**'  
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  continuous-integration:
+
+    runs-on: ubuntu-latest
+    
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.8]
+    
+    env:
+      DB_DATABASE: test_db
+      DB_USER: root
+      DB_PASSWORD: root
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Verify MySQL connection
+      run: |
+        sudo service mysql start
+        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
+    - name: Run migrations
+      run: python manage.py migrate
+    - name: Run Tests
+      run: |
+        python manage.py test
