@@ -52,6 +52,10 @@ jobs:
         DB_PASSWORD : ${{ env.DB_PASSWORD }}
         DB_NAME : ${{ env.DB_NAME }}
   
+    - name: Move secret.json to correct directory
+      run: |
+        mv ${{ steps.create-env.outputs.full-path }} web_editor/
+        
     - name: Run migrations
       run: python web_editor/manage.py migrate
     - name: Run Tests
