@@ -43,12 +43,15 @@ jobs:
         mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
         
     - name: Create secret.json file
-      run: |
-        echo "SECRET_KEY=$SECRET_KEY">> web_editor/secret.json
-        echo "DB_USER=$DB_USER">> web_editor/secret.json
-        echo "DB_PASSWORD=$DB_PASSWORD">> web_editor/secret.json
-        echo "DB_NAME=$DB_NAME">> web_editor/secret.json
-
+      uses: schdck/create-env-json@v1
+      id: create-env
+      with:
+        file-name: 'secret.json'
+        SECRET_KEY: ${{ env.SECRET_KEY }}
+        DB_USER : ${{ env.DB_USER }}
+        DB_PASSWORD : ${{ env.DB_PASSWORD }}
+        DB_NAME : ${{ env.DB_NAME }}
+  
     - name: Run migrations
       run: python web_editor/manage.py migrate
     - name: Run Tests
