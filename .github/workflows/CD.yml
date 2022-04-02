@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  continous-deployment:
+  continuous-deployment:
   
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
