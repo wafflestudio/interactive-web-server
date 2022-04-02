@@ -9,8 +9,7 @@ on:
 jobs:
   continuous-deployment:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    #needs: [ continuous-integration ]
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       # Step 1
