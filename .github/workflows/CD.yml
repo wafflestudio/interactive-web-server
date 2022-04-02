@@ -1,18 +1,21 @@
 name: Django CD
 
 on:
-  workflow_run:
-    workflows: [Django CI]
-    branches: 
+  #workflow_run:
+    #workflows: [Django CI]
+    #branches: 
+      #- main
+    #types:
+      #- completed
+  push: 
+    branches:
       - main
-      - ci-cd # remove ci-cd
-    types:
-      - completed
+      - ci-cd # temporary
 
 jobs:
   continuous-deployment:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       # Step 1
