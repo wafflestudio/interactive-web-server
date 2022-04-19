@@ -8,11 +8,11 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN ["/bin/bash", "apk update"]
-RUN ["/bin/bash" "apk add gcc python3-dev musl-dev zlib-dev jpeg-dev mariadb-connector-c-dev libffi-dev"]
+RUN ["/bin/bash", "-c", "apk update"]
+RUN ["/bin/bash", "-c", "apk add gcc python3-dev musl-dev zlib-dev jpeg-dev mariadb-connector-c-dev libffi-dev"]
 
 COPY . /usr/src/app/
 
 # install dependencies
-RUN ["/bin/bash", "pip install --upgrade pip"]
-RUN ["/bin/bash", "pip install -r requirements.txt"]
+RUN ["/bin/bash", "-c", "pip install --upgrade pip"]
+RUN ["/bin/bash", "-c", "pip install -r requirements.txt"]
