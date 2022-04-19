@@ -10,7 +10,9 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update 
-RUN apt-get install -y bash gcc python3-dev musl-dev zlib-dev jpeg-dev mariadb-connector-c-dev libffi-dev
+RUN apt-get install -y bash gcc python3-dev musl-dev zlib1g-dev libjpeg-dev libmariadb3 libmariadb-dev libffi-dev
+
+
 
 COPY . /usr/src/app/
 
