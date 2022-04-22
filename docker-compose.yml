@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   nginx:
@@ -28,9 +28,24 @@ services:
       - db
   db:
     image: mysql
+    build:
+      context: ./mysql
+      dockerfile: ./mysql.Dockerfile
     ports:
       - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_secret
+      MYSQL_USER: editor_db_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_secret
+      MYSQL_DATABASE: web_editor_db
     volumes:
       - mysql_data:/var/lib/mysql
+    secrets:
+      - mysql_secret
+
+secrets:
+  mysql_secret:
+    file: mysql_secret
+
 volumes:
   mysql_data:
