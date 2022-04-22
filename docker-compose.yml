@@ -28,9 +28,9 @@ services:
       - db
   db:
     image: mysql
-    build:
-      context: ./mysql
-      dockerfile: ./mysql.Dockerfile
+    #build:
+      #context: ./mysql
+      #dockerfile: ./mysql.Dockerfile
     ports:
       - 3307:3306
     environment:
