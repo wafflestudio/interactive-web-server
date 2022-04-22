@@ -45,7 +45,7 @@ services:
 
 secrets:
   mysql_secret:
-    file: mysql_secret
+    file: ~/deploy/mysql_secret
 
 volumes:
   mysql_data:
