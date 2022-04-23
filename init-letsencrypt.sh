@@ -5,7 +5,7 @@
   #exit 1
 #fi
 
-domains=(wafflespringseminar.shop) #www.iwe-server.shop
+domains=(www.wafflespringseminar.shop) #www.iwe-server.shop
 rsa_key_size=4096
 data_path="./data/certbot"
 email="padme0421@gmail.com" # Adding a valid address is strongly recommended
