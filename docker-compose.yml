@@ -4,28 +4,28 @@ services:
   nginx:
     build: ./nginx
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+      - /etc/letsencrypt:/etc/letsencrypt
+      #- ./data/certbot/www:/var/www/certbot
     ports:
-      - 81:80
-      - 444:443
+      - 80:80
+      - 443:443
     depends_on:
       - web
-  certbot:
-    image: certbot/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done; '"
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
+  #certbot:
+    #image: certbot/certbot
+    #entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done; '"
+    #volumes:
+     # - ./data/certbot/conf:/etc/letsencrypt
+     # - ./data/certbot/www:/var/www/certbot
   web:
     build:
       context: .
       dockerfile: ./Dockerfile
-    command: gunicorn web_editor.web_editor.wsgi:application --bind 0.0.0.0:8001
+    command: gunicorn web_editor.web_editor.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./:/usr/src/app/
     expose:
-      - 8001
+      - 8000
     depends_on:
       - db
   db:
