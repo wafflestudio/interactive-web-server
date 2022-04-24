@@ -7,8 +7,8 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
       #- ./data/certbot/www:/var/www/certbot
     ports:
-      - 80:80
-      - 443:443
+      - 80:80 # 81:80
+      - 443:443 # 444:443
     depends_on:
       - web
   #certbot:
@@ -19,42 +19,42 @@ services:
      # - ./data/certbot/www:/var/www/certbot
   web:
     build:
-      context: .
-      dockerfile: ./Dockerfile
-    command: gunicorn web_editor.web_editor.wsgi:application --bind 0.0.0.0:8000
+      context: ./web_editor
+      dockerfile: web_editor.Dockerfile
+    #command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - ./:/usr/src/app/
-    expose:
-      - 8000
-    depends_on:
-      - db
-  db:
-    image: mysql
+      - ./web_editor:/usr/src/app/
+    ports:
+      8000:8000
+    #depends_on:
+    #  - db
+  #db:
+    #image: mysql
     #build:
       #context: ./mysql
       #dockerfile: ./mysql.Dockerfile
-    ports:
-      - 3307:3306
-    environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_secret
-      MYSQL_USER: editor_db_user
-      MYSQL_PASSWORD_FILE: /run/secrets/mysql_secret
-      MYSQL_DATABASE: web_editor_db
-    volumes:
-      - mysql_data:/var/lib/mysql
-    secrets:
-      - mysql_secret
-    deploy:
-      resources:
-        limits:
-          memory: 50M
-        reservations:
-          memory: 20M
+    #ports:
+     # - 3308:3306
+    #environment:
+      #MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_secret
+      #MYSQL_USER: editor_db_user
+      #MYSQL_PASSWORD_FILE: /run/secrets/mysql_secret
+      #MYSQL_DATABASE: web_editor_db
+    #volumes:
+     # - mysql_data:/var/lib/mysql
+    #secrets:
+     # - mysql_secret
+    #deploy:
+     # resources:
+     #   limits:
+     #     memory: 50M
+     #   reservations:
+     #     memory: 20M
 
 
-secrets:
-  mysql_secret:
-    file: ../mysql_secret
+#secrets:
+ # mysql_secret:
+  #  file: ../mysql_secret
 
-volumes:
-  mysql_data:
+#volumes:
+ # mysql_data:

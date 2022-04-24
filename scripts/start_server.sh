@@ -1,7 +1,7 @@
-cd /home/ec2-user/deploy/interactive-web-server
-if [ -f "secret.json" ] 
+cd /home/ec2-user/deploy/interactive-web-server/web_editor
+if [ ! -f "secret.json" ]
 then
-    echo "secret.json exists." > debug.txt # debugging
+    cp /home/ec2-user/deploy/secret.json /home/ec2-user/deploy/interactive-web-server/web_editor/
 fi
 
 docker-compose build --no-cache

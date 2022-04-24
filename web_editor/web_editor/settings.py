@@ -39,7 +39,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['13.124.78.184', 'iwe-server.shop', '127.0.0.1', 'localhost']
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'web_editor.user', # changed
+    'user', # changed
 ]
 
 MIDDLEWARE = [
@@ -96,6 +96,7 @@ DATABASES = {
         'NAME' : get_secret("DB_NAME"),
         'USER' : get_secret("DB_USER"),
         'PASSWORD' : get_secret("DB_PASSWORD"),
+        'HOST': get_secret('DB_HOST'),
         'PORT' : '3306',
     }
 }

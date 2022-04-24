@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web_editor.web_editor.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web_editor.settings')
 
 application = get_wsgi_application()
