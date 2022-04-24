@@ -21,6 +21,7 @@ jobs:
       SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }} 
       DB_NAME: test_db
       DB_USER: root
+      DB_HOST: "127.0.0.1"
       DB_PASSWORD: root
     
     steps:
@@ -50,6 +51,7 @@ jobs:
         SECRET_KEY: ${{ env.SECRET_KEY }}
         DB_USER : ${{ env.DB_USER }}
         DB_PASSWORD : ${{ env.DB_PASSWORD }}
+        DB_HOST: ${{ env.DB_HOST }}
         DB_NAME : ${{ env.DB_NAME }}
   
     - name: Move secret.json to correct directory
