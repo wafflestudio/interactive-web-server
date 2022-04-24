@@ -9,8 +9,7 @@ FROM python:3.8
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update 
-RUN apt-get install -y bash gcc python3-dev musl-dev zlib1g-dev libjpeg-dev libmariadb3 libmariadb-dev libffi-dev
+RUN apt-get update && apt-get install -y bash gcc python3-dev musl-dev zlib1g-dev libjpeg-dev libmariadb3 libmariadb-dev libffi-dev
 
 COPY . /usr/src/app/
 # set work directory

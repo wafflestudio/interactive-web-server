@@ -4,5 +4,5 @@ then
     echo "secret.json exists." > debug.txt # debugging
 fi
 
-docker-compose build
+docker-compose build --no-cache
 docker-compose up -d
