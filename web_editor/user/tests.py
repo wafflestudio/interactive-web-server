@@ -1,6 +1,4 @@
-from django.db import transaction
 from django.test import TestCase
-
 from factory.django import DjangoModelFactory
 from passlib.handlers.django import django_pbkdf2_sha256
 from rest_framework import status
