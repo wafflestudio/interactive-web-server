@@ -1,4 +1,3 @@
-from django.db import transaction
 from django.test import TestCase
 from django.test import Client
 

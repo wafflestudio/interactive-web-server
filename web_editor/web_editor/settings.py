@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'user'
+    'user',
+    'object',
 ]
 
 MIDDLEWARE = [
@@ -116,7 +117,7 @@ DATABASES = {
         'USER': get_secret('DB_USER'),
         'PASSWORD': get_secret('DB_PASSWORD'),
         'HOST': get_secret('DB_HOST'),
-        'PORT': '3306'
+        'PORT': '3306',
     }
 }
 

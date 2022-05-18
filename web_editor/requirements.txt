@@ -18,7 +18,6 @@ django-utils==0.0.2
 djangorestframework==3.12.1
 djangorestframework-jwt==1.11.0
 drf-yasg==1.20.0
-gunicorn==20.1.0
 factory-boy==3.2.1
 Faker==13.3.4
 httplib2==0.20.4
