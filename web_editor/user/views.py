@@ -1,10 +1,13 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import update_last_login
 from django.db import IntegrityError
+from django.views import View
+from django.http import HttpResponse
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+import json
 
 from .serializer import *
 
@@ -36,6 +39,18 @@ class UserLoginView(APIView):
             update_last_login(None, user)
             return Response(status=status.HTTP_200_OK, data=UserSerializer(user).data)
         return Response(status=status.HTTP_403_FORBIDDEN, data="아이디나 패스워드가 일치하지 않습니다.")
+
+class CSRFCheckView(View):
+    
+    def get(self, request):
+        token = request.COOKIES.get('csrftoken')
+        data = {
+            'csrftoken': token
+        }
+        if token:
+            return HttpResponse(json.dumps(data), content_type = 'application/json')
+        else:
+            return HttpResponse(status=403)
 
 
 class UserViewSet(GenericViewSet):
