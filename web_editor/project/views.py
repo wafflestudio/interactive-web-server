@@ -6,7 +6,6 @@ from rest_framework.views import APIView
 from .serializer import *
 # Create your views here.
 class ProjectCreateView(APIView):
-    permission_classes = (permissions.IsAuthenticated, )
 
     def post(self, request, *args, **kwargs):
         data = request.data.copy()
@@ -24,7 +23,6 @@ class ProjectCreateView(APIView):
         return Response(status=status.HTTP_200_OK, data=ProjectSerializer(projects, many=True).data)
         
 class ProjectUpdateView(APIView):
-    permission_classes = (permissions.IsAuthenticated, )
 
     def get(self, request, pk=None):
         project = Project.objects.filter(id=pk) if pk != 'me' else Project.objects.filter(writer=request.user)
