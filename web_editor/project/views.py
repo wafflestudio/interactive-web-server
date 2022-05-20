@@ -28,7 +28,7 @@ class ProjectUpdateView(APIView):
 
     def get(self, request, pk=None):
         project = Project.objects.filter(id=pk) if pk != 'me' else Project.objects.filter(writer=request.user)
-        if not project:
+        if not project and pk != 'me':
             return Response(status=status.HTTP_400_BAD_REQUEST, data="해당 id 값에 대응되는 프로젝트가 없습니다.")
         return Response(status=status.HTTP_200_OK, data=ProjectSerializer(project, many=True).data)
 
