@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'user',
     'project',
     'object',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -108,6 +109,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'web_editor.wsgi.application'
+ASGI_APPLICATION = "web_editor.asgi.application"
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
