@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializer import *
+from web_editor.wsgi import sio
 # Create your views here.
 class ProjectCreateView(APIView):
 
@@ -50,3 +51,19 @@ class ProjectUpdateView(APIView):
         
         project.delete()
         return Response(status=status.HTTP_200_OK, data={"success" : True})
+
+class ProjectNamespace(sio.Namespace):
+    def on_connect(self, sid, environ):
+        print('Connected')
+
+    def on_disconnect(self, sid):
+        print('Disconnected')
+
+    def on_enter(sid, pk):
+        sio.enter_room(sid, pk)
+
+    def on_leave(sid, pk):
+        sio.leave_room(sid, pk)
+
+
+sio.register_namespace(ProjectNamespace('/project/<str:pk>'))
