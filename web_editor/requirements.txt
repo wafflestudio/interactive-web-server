@@ -52,3 +52,4 @@ gunicorn==20.1.0
 eventlet
 python-socketio
 channels==3.0.0
+channels-redis
