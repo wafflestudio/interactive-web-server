@@ -35,6 +35,6 @@ jobs:
         id: deploy
         run: |
           aws deploy create-deployment \
-          --application-name waffle-iwe-deploy \
-          --deployment-group-name waffle-iwe-deployment \
+          --application-name iwe-server-deployment \
+          --deployment-group-name iwe-server-group \
           --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
