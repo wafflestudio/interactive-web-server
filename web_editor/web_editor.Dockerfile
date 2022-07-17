@@ -21,5 +21,5 @@ WORKDIR /usr/src/app
 # install dependencies
 #RUN pip install --no-cache-dir --upgrade pip
 RUN pip install -r requirements.txt
-RUN cd web_editor && python3 manage.py makemigrations && python3 manage.py migrate
+RUN python3 manage.py makemigrations && python3 manage.py migrate
 CMD ["gunicorn", "web_editor.wsgi:application", "--bind", "0.0.0.0:8000"]
