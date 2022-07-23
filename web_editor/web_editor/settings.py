@@ -41,13 +41,14 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.124.78.184', 'iwe-server.shop', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['3.39.195.197', 'iwe-server.shop', '127.0.0.1', 'localhost'] # 13.124.78.184
 
 AUTH_USER_MODEL = 'user.User'
 
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,6 +79,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://localhost:3000',
     'http://13.125.31.100:3000',
     'https://13.125.31.100:3000',
+    'http://43.200.2.162:3000',
+    'https://43.200.2.162:3000'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
