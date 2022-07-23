@@ -133,3 +133,5 @@ dmypy.json
 
 data/certbot
 mysql_secret
+
+.vscode/

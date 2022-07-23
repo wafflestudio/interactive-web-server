@@ -21,4 +21,5 @@ urlpatterns = [
     path('api/v1/', include('user.urls')),
     path('api/v1/', include('project.urls')),
     path('api/v1/', include('object.urls')),
+    path('api/v1/', include('project.routing'))
 ]
