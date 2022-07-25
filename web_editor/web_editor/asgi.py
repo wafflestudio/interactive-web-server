@@ -18,6 +18,8 @@ from django.core.asgi import get_asgi_application
 
 import project.routing
 
+from wsgi import *
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web_editor.settings')
 
 django_asgi_app = get_asgi_application()
