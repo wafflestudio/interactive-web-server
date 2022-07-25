@@ -9,8 +9,6 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 
 from django.urls import re_path
 
-from web_editor.project import consumers
-
 import os
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
