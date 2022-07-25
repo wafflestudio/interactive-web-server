@@ -1,5 +1,6 @@
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
+from web_editor.wsgi import *
 from .models import Project
 
 class ProjectConsumer(WebsocketConsumer):
