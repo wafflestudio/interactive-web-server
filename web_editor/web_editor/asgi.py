@@ -11,11 +11,13 @@ from django.urls import re_path
 
 import os
 import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web_editor.settings')
+
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web_editor.settings')
 django.setup()
 
 from django.core.asgi import get_asgi_application
