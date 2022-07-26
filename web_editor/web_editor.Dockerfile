@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED 1
 #ENV https_proxy http://192.168.1.12:3128
 
 #RUN apt-get update
-RUN apt-get install -y bash libjpeg-dev libmariadb3 libmariadb-dev daphne
+RUN apt-get install -y bash libjpeg-dev libmariadb3 libmariadb-dev
 
 COPY . /usr/src/app/
 # set work directory
