@@ -54,3 +54,4 @@ python-socketio
 channels==3.0.0
 channels-redis
 daphne
+uwsgi

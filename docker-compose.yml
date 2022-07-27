@@ -24,6 +24,7 @@ services:
     #command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./web_editor:/usr/src/app/
+      - ./uwsgi:/usr/src/uwsgi/
     ports:
       - 8000:8000
       - 9001:9001
