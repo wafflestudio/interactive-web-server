@@ -23,5 +23,5 @@ WORKDIR /usr/src/app
 RUN pip install -r requirements.txt
 RUN python3 manage.py makemigrations && python3 manage.py migrate
 RUN daphne -p 9001 web_editor.asgi:application 
-#CMD ["gunicorn", "web_editor.wsgi:application", "--bind", "0.0.0.0:8000"]
-CMD ["uwsgi", "--ini", "uwsgi/web_editor.ini"]
+CMD ["gunicorn", "web_editor.wsgi:application", "--bind", "0.0.0.0:8000"]
+#CMD ["uwsgi", "--ini", "uwsgi/web_editor.ini"]

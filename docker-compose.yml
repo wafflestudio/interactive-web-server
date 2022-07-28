@@ -27,6 +27,10 @@ services:
     ports:
       - 8000:8000
       - 9001:9001
+  web-editor-redis:
+    image: redis
+    ports:
+      - "6379:6379"
     #depends_on:
     #  - db
   #db:
