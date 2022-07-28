@@ -1,6 +1,7 @@
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
-from models import Project
+from web_editor.wsgi import *
+from .models import Project
 
 class ProjectConsumer(WebsocketConsumer):
     def connect(self): # send id

@@ -26,6 +26,7 @@ services:
       - ./web_editor:/usr/src/app/
     ports:
       - 8000:8000
+      - 9001:9001
     #depends_on:
     #  - db
   #db:
