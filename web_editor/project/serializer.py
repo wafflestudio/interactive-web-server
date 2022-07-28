@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 class ProjectCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ('title', 'writer', )
+        fields = '__all__'
 
     def create(self, validated_data):
         project = Project.objects.create(**validated_data)
@@ -15,7 +15,7 @@ class ProjectCreateSerializer(serializers.ModelSerializer):
 class ProjectUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = ('title', )
+        fields = ('title', 'html', 'css', 'js')
     
     def update(self, project, validated_data):
         super().update(project, validated_data)
