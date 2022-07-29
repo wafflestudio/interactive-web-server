@@ -8,6 +8,7 @@ FROM python:3.8
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV REDIS_HOST "web-editor-redis"
 #ENV http_proxy http://192.168.1.12:3128
 #ENV https_proxy http://192.168.1.12:3128
 

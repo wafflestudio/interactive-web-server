@@ -189,7 +189,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("web-editor-redis", 6379)],
+            "hosts": [(get_secret('REDIS_HOST'), 6379)],
         },
     },
 }
