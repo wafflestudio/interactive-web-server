@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'user',
     'project',
     'object',
-    'channels'
+    'channels',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
@@ -192,4 +193,9 @@ CHANNEL_LAYERS = {
             "hosts": [(get_secret('REDIS_HOST'), 6379)],
         },
     },
+}
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
 }

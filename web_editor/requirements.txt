@@ -54,3 +54,8 @@ python-socketio
 channels==3.0.0
 channels-redis
 daphne
+django-extensions==3.1
+pydot
+pygraphviz
+Pillow
+graphviz

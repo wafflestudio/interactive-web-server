@@ -13,7 +13,7 @@ ENV REDIS_HOST "redis"
 #ENV https_proxy http://192.168.1.12:3128
 
 #RUN apt-get update
-RUN apt-get install -y bash libjpeg-dev libmariadb3 libmariadb-dev
+RUN apt-get install -y bash libjpeg-dev libmariadb3 libmariadb-dev graphviz libgraphviz-dev
 
 COPY . /usr/src/app/
 # set work directory
