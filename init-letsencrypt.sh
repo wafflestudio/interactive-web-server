@@ -1,4 +1,4 @@
-
+# NOT USED
 #!/bin/bash
 
 if ! [ -x "$(command -v docker-compose)" ]; then
@@ -6,9 +6,9 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(iwe-server.shop) #www.iwe-server.shop
+domains=(webgam-server.shop)
 rsa_key_size=4096
-data_path="./data/certbot"
+data_path="./certbot"
 email="padme0421@gmail.com" # Adding a valid address is strongly recommended
 staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
 
@@ -23,6 +23,7 @@ fi
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
   sudo mkdir -p "$data_path/conf"
+  sudo chmod 777 $data_path/conf
   curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "$data_path/conf/options-ssl-nginx.conf"
   curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "$data_path/conf/ssl-dhparams.pem"
   echo
