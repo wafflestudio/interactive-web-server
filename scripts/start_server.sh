@@ -5,4 +5,6 @@ then
 fi
 
 docker-compose build --no-cache
-docker-compose up -d
+# docker-compose up -d
+cd /home/ec2-user/deploy/interactive-web-server/
+init-letsencrypt.sh
