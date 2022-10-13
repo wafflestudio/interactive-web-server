@@ -10,7 +10,8 @@ on:
   push: 
     branches:
       - main
-      - ci-cd # temporary
+      - waffle-server-migration
+      # - ci-cd
 
 jobs:
   continuous-deployment:
@@ -35,6 +36,6 @@ jobs:
         id: deploy
         run: |
           aws deploy create-deployment \
-          --application-name iwe-server-deployment \
-          --deployment-group-name iwe-server-group \
+          --application-name webgam-deploy \
+          --deployment-group-name webgam-dev \
           --github-location repository=${{ github.repository }},commitId=${{ github.sha }}

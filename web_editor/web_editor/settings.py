@@ -41,7 +41,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.39.195.197', 'iwe-server.shop', '127.0.0.1', 'localhost'] # 13.124.78.184
+ALLOWED_HOSTS = ['13.124.48.26', 'iwe-server.shop', '127.0.0.1', 'localhost', 'webgam-server.shop']
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'user',
-    'object',
+    'object'
 ]
 
 MIDDLEWARE = [
