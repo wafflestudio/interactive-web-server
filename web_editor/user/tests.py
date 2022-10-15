@@ -107,10 +107,14 @@ class PostUserTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         data = response.json()
-        self.assertEqual(data['user_id'], 'bar')
-        self.assertEqual(data['username'], 'bar_test')
-        self.assertEqual(data['email'], 'bar@test.com')
-        self.assertTrue(django_pbkdf2_sha256.verify('barPassword', data['password']))
+        user_data = data['user']
+        token = data['token']
+
+        self.assertEqual(user_data['user_id'], 'bar')
+        self.assertEqual(user_data['username'], 'bar_test')
+        self.assertEqual(user_data['email'], 'bar@test.com')
+        self.assertTrue(django_pbkdf2_sha256.verify('barPassword', user_data['password']))
+        
         self.assertEqual(User.objects.count(), 2)
 
 
@@ -250,32 +254,32 @@ class DeleteUserTestCase(TestCase):
         self.assertFalse(User.objects.get(user_id='foo').is_active)
         self.assertFalse(self.client.login(user_id='foo', password='fooPassword'))
 
-class CSRFTokenTestCase(TestCase):
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = UserFactory(
-            user_id='foo',
-            username='foo_test',
-            email='foo@test.com',
-            password='fooPassword',
-        )
-        cls.login_data = {
-            'username': 'foo_test',
-            'password': 'fooPassword',
-        }
-        #cls.client = Client(enforce_csrf_checks=True)
+#class CSRFTokenTestCase(TestCase):
+
+#    @classmethod
+#    def setUpTestData(cls):
+#        cls.user = UserFactory(
+#            user_id='foo',
+#            username='foo_test',
+#            email='foo@test.com',
+#            password='fooPassword',
+#        )
+#        cls.login_data = {
+#            'username': 'foo_test',
+#            'password': 'fooPassword',
+#        }
+#        #cls.client = Client(enforce_csrf_checks=True)
     
-    def test_csrf_check_invalid(self):
-        # before login for first time
-        response = self.client.get('/api/v1/verify/')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+#    def test_csrf_check_invalid(self):
+#        # before login for first time
+#        response = self.client.get('/api/v1/verify/')
+#        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
     
-    def test_csrf_check_valid(self):
-        token_value = 'csrftoken'
-        self.client.cookies['csrftoken'] = token_value
-        response = self.client.get('/api/v1/verify/')
-        data = response.json()
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(data['csrftoken'], token_value)
-        
+#    def test_csrf_check_valid(self):
+#        token_value = 'csrftoken'
+#        self.client.cookies['csrftoken'] = token_value
+#        response = self.client.get('/api/v1/verify/')
+#        data = response.json()
+#        self.assertEqual(response.status_code, status.HTTP_200_OK)
+#        self.assertEqual(data['csrftoken'], token_value)
