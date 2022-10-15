@@ -12,7 +12,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
             'username',
             'password',
             'email',
-            'date_joined',
         )
 
     def create(self, validated_data):
