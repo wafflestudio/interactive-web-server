@@ -28,8 +28,10 @@ class UserSignUpView(APIView):
             response = Response(
                 {
                     "user": serializer.data,
+                    "message": "signup success",
                     "token": {
-                        "access_token": access_token
+                        "access_token": access_token,
+                        "refresh_token": refresh_token
                     },
                 },
                 status=status.HTTP_201_CREATED,
@@ -64,7 +66,8 @@ class UserLoginView(APIView):
                     "user": UserSerializer(user).data,
                     "message": "login success",
                     "token": {
-                        "access_token": access_token
+                        "access_token": access_token,
+                        "refresh_token": refresh_token
                     },
                 },
                 status=status.HTTP_200_OK,
