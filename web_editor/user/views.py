@@ -55,8 +55,8 @@ class UserLoginView(APIView):
         password = request.data.get('password')
         user = authenticate(request, username=user_id, password=password)
         if user:
-            login(request, user)
-            update_last_login(None, user)
+            #login(request, user)
+            #update_last_login(None, user)
             
             token = TokenObtainPairSerializer.get_token(user)
             refresh_token = str(token)
