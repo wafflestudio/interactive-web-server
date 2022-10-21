@@ -130,7 +130,7 @@ class GetUserTestCase(TestCase):
 
     def test_get_user_error_no_credentials(self):
         response = self.client.get('/api/v1/users/me/')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_user_error_not_found(self):
         self.client.login(user_id='foo', password='fooPassword')
