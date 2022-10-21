@@ -83,6 +83,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://13.125.31.100:3000',
     'http://43.200.2.162:3000',
     'https://43.200.2.162:3000',
+    'http://52.219.56.137:3000'
     'http://webgam-dev.s3-website.ap-northeast-2.amazonaws.com',
 ]
 
@@ -189,7 +190,7 @@ REST_FRAMEWORK = {
 REST_USE_JWT = True
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=20),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
