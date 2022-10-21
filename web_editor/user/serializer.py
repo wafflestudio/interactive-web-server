@@ -1,8 +1,9 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
 from .models import User
-
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,3 +45,22 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class JWTRefreshSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()
+    access_token = serializers.CharField(read_only=True)
+    token_class = RefreshToken
+
+    def validate(self, attrs):
+        refresh_token = self.token_class(attrs["refresh_token"])
+
+        data = {"access_token": str(refresh_token.access_token)}
+
+        if settings.ROTATE_REFRESH_TOKENS:
+            refresh_token.set_jti()
+            refresh_token.set_exp()
+            refresh_token.set_iat()
+
+            data["refresh_token"] = str(refresh_token)
+            data["access_token"] = str(refresh_token.access_token)
+
+        return data

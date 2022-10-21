@@ -79,6 +79,19 @@ class UserLoginView(APIView):
 
         return Response(status=status.HTTP_403_FORBIDDEN, data="아이디나 패스워드가 일치하지 않습니다.")
 
+class JWTRefreshView(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request, *args, **kwargs):
+        data = JWTRefreshSerializer.validate(request.data)
+        response = Response(
+            data=data,
+            status=status.HTTP_200_OK,
+        )
+
+        response.set_cookie("refresh_token", data["refresh_token"], httponly=True)
+
+        return response
 
 class CSRFCheckView(View):
     
