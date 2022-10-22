@@ -55,12 +55,11 @@ class JWTRefreshSerializer(serializers.Serializer):
 
         data = {"access_token": str(refresh_token.access_token)}
 
-        if settings.ROTATE_REFRESH_TOKENS:
-            refresh_token.set_jti()
-            refresh_token.set_exp()
-            refresh_token.set_iat()
+        refresh_token.set_jti()
+        refresh_token.set_exp()
+        refresh_token.set_iat()
 
-            data["refresh_token"] = str(refresh_token)
-            data["access_token"] = str(refresh_token.access_token)
+        data["refresh_token"] = str(refresh_token)
+        data["access_token"] = str(refresh_token.access_token)
 
         return data
