@@ -34,9 +34,9 @@ class PostProjectTestCase(TestCaseBase):
         self.freezer.stop()
         
     def test_post_no_title(self):
-        user = User.objects.get(user_id="foo")
+        #user = User.objects.get(user_id="foo")
         data = {
-            "writer" : user
+            "writer" : self.user
         }
         response = self.client.post("/api/v1/project/", data, **self.bearer_token)
         self.assertEqual(response.status_code, 400)
@@ -52,18 +52,16 @@ class PostProjectTestCase(TestCaseBase):
         
     def test_post_project(self):
         data = {
-            "title" : "title2",
-            "writer" : self.user
+            "title" : "title2"
         }
         response = self.client.post("/api/v1/project/", data, **self.bearer_token)
-        self.assertEqual(response.json()['writer']['username'], "foo_test")
-        self.assertEqual(response.json()['title'], "title2")
+        self.assertEqual(response.json()["writer"]["username"], "foo_test")
+        self.assertEqual(response.json()["title"], "title2")
         self.assertEqual(Project.objects.count(), 2)
         
     def test_post_project_created_at(self):
         data = {
-            "title" : "title2",
-            "writer" : self.user
+            "title" : "title2"
         }
         self.client.post("/api/v1/project/", data, **self.bearer_token)
         project = Project.objects.get(title="title2")
@@ -140,13 +138,13 @@ class PutProjectTestCase(TestCaseBase):
         self.freezer.stop()
         
     def test_update_project_title(self):
-        id = Project.objects.get(title="title1").id
+        id = self.project.id # Project.objects.get(title="title1").id
         data = {"title" : "title2"}
         response = self.client.put("/api/v1/project/" + str(id) + "/", data, content_type="application/json", **self.bearer_token)
         self.assertEqual(response.json()["title"], "title2")
         
     def test_update_project_updated_at(self):
-        id = Project.objects.get(title="title1").id
+        id = self.project.id # Project.objects.get(title="title1").id
         data = {"title" : "title2"}
         self.client.put("/api/v1/project/" + str(id) + "/", data, content_type="application/json", **self.bearer_token)
         project = Project.objects.get(title="title2")
@@ -154,7 +152,7 @@ class PutProjectTestCase(TestCaseBase):
         self.assertEqual(project.updated_at, datetime.datetime.strptime("2022-02-22 00:00:00", '%Y-%m-%d %H:%M:%S').replace(tzinfo=datetime.timezone.utc))
         
     def test_update_nothing(self):
-        id = Project.objects.get(title="title1").id
+        id = self.project.id #Project.objects.get(title="title1").id
         self.client.put("/api/v1/project/" + str(id) + "/", {}, content_type="application/json", **self.bearer_token)
         project = Project.objects.get(title="title1")
 
@@ -166,7 +164,7 @@ class PutProjectTestCase(TestCaseBase):
         self.assertEqual(response.status_code, 400)
         
     def test_update_project_writer(self):
-        id = Project.objects.get(title="title1").id
+        id = self.project.id #Project.objects.get(title="title1").id
         wrong_user = UserFactory(
             user_id='foo2',
             username='foo2_test',
