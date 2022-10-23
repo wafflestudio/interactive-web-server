@@ -2,12 +2,30 @@ from django.test import TestCase
 from user.models import User
 
 from rest_framework_simplejwt.tokens import RefreshToken
+from factory.django import DjangoModelFactory
+
+class UserFactory(DjangoModelFactory):
+    class Meta:
+       model = User
+
+    email = 'test@test.com'
+
+    @classmethod
+    def create(cls, **kwargs):
+        user = User.objects.create(**kwargs)
+        user.set_password(kwargs.get('password', ''))
+        user.save()
+        return user
 
 class TestCaseBase(TestCase):
-    @property
-    def bearer_token(self):
-        # assuming there is a user in User model
-        user = User.objects.get(id=1)
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory(
+            user_id='foo',
+            username='foo_test',
+            email='foo@test.com',
+            password='fooPassword',
+        )
 
-        refresh = RefreshToken.for_user(user)
-        return {"HTTP_AUTHORIZATION":f'Bearer {refresh.access_token}'}
+        refresh = RefreshToken.for_user(cls.user)
+        cls.bearer_token = {"HTTP_AUTHORIZATION":f'Bearer {refresh.access_token}'}

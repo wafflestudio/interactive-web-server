@@ -1,26 +1,11 @@
 from django.test import TestCase
-from django.test import Client
 
-from factory.django import DjangoModelFactory
 from passlib.handlers.django import django_pbkdf2_sha256
 from rest_framework import status
 
 from user.models import User
 from common.testcase import TestCaseBase
-
-class UserFactory(DjangoModelFactory):
-    class Meta:
-        model = User
-
-    email = 'test@test.com'
-
-    @classmethod
-    def create(cls, **kwargs):
-        user = User.objects.create(**kwargs)
-        user.set_password(kwargs.get('password', ''))
-        user.save()
-        return user
-
+from common.testcase import UserFactory
 
 class PostUserTestCase(TestCase):
     @classmethod
@@ -121,19 +106,13 @@ class PostUserTestCase(TestCase):
 class GetUserTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(
-            user_id='foo',
-            username='foo_test',
-            email='foo@test.com',
-            password='fooPassword',
-        )
+        super().setUpTestData()
 
     def test_get_user_error_no_credentials(self):
         response = self.client.get('/api/v1/users/me/')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_user_error_not_found(self):
-        #self.client.login(user_id='foo', password='fooPassword')
         response = self.client.get('/api/v1/users/100/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -145,7 +124,6 @@ class GetUserTestCase(TestCaseBase):
             'password': 'barPassword',
         })
         self.assertEqual(User.objects.count(), 2)
-        #self.client.login(user_id='foo', password='fooPassword')
         user = User.objects.get(user_id='bar')
         response = self.client.get('/api/v1/users/' + str(user.pk) + '/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -155,7 +133,6 @@ class GetUserTestCase(TestCaseBase):
         self.assertEqual(data['email'], 'bar@test.com')
 
     def test_get_me(self):
-        #self.client.login(user_id='foo', password='fooPassword')
         response = self.client.get('/api/v1/users/me/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
@@ -167,19 +144,13 @@ class GetUserTestCase(TestCaseBase):
 class PutUserTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(
-            user_id='foo',
-            username='foo_test',
-            email='foo@test.com',
-            password='fooPassword',
-        )
+        super().setUpTestData()
         cls.put_data = {
             'username': 'foo_put_test',
             'email': 'foo_put_test@test.com',
         }
 
     def test_put_user_error(self):
-        #self.client.login(user_id='foo', password='fooPassword')
         response = self.client.put('/api/v1/users/100/', data=self.put_data, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -191,14 +162,12 @@ class PutUserTestCase(TestCaseBase):
             'password': 'barPassword',
         })
         self.assertEqual(User.objects.count(), 2)
-        #self.client.login(user_id='foo', password='fooPassword')
         data = self.put_data.copy()
         data.update({'email': 'bar@test.com'})
         response = self.client.put('/api/v1/users/me/', data=data, content_type='application/json', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_put_me_error_bad_request(self):
-        #self.client.login(user_id='foo', password='fooPassword')
         # Try to change User ID
         data = self.put_data.copy()
         data['user_id'] = 'bad_user_id'
@@ -223,7 +192,6 @@ class PutUserTestCase(TestCaseBase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_put_me(self):
-        #self.client.login(user_id='foo', password='fooPassword')
         response = self.client.put('/api/v1/users/me/', data=self.put_data, content_type='application/json', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
@@ -235,20 +203,13 @@ class PutUserTestCase(TestCaseBase):
 class DeleteUserTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(
-            user_id='foo',
-            username='foo_test',
-            email='foo@test.com',
-            password='fooPassword',
-        )
+        super().setUpTestData()
 
     def test_delete_user_error(self):
-        #self.client.login(user_id='foo', password='fooPassword')
         response = self.client.delete('/api/v1/users/100/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_me(self):
-        #self.client.login(user_id='foo', password='fooPassword')
         response = self.client.delete('/api/v1/users/me/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(User.objects.get(user_id='foo').is_active)
