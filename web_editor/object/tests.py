@@ -4,7 +4,8 @@ from rest_framework import status
 
 from object.models import Object
 from user.tests import UserFactory
-
+from common.testcase import TestCaseBase
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class ObjectFactory(DjangoModelFactory):
     class Meta:
@@ -17,15 +18,11 @@ class ObjectFactory(DjangoModelFactory):
         return instance
 
 
-class PostObjectTestCase(TestCase):
+class PostObjectTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(
-            user_id='foo',
-            username='foo_test',
-            email='foo@test.com',
-            password='fooPassword',
-        )
+        super().setUpTestData()
+
         cls.object = ObjectFactory(
             user=cls.user,
             project_name='foo',
@@ -59,36 +56,34 @@ class PostObjectTestCase(TestCase):
         }
 
     def test_post_object_error_bad_request(self):
-        self.client.login(user_id='foo', password='fooPassword')
         # Invalid Visibility
         data = self.post_data.copy()
         data.update({'visibility': 'Invalid'})
-        response = self.client.post('/api/v1/objects/', data=data)
+        response = self.client.post('/api/v1/objects/', data=data, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Object.objects.count(), 1)
         # Invalid Svg type
         data = self.post_data.copy()
         data.update({'svg_type': 'Rectangle'})
-        response = self.client.post('/api/v1/objects/', data=data)
+        response = self.client.post('/api/v1/objects/', data=data, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Object.objects.count(), 1)
         # Invalid Source URL
         data = self.post_data.copy()
         data.update({'src_url': 'image'})
-        response = self.client.post('/api/v1/objects/', data=data)
+        response = self.client.post('/api/v1/objects/', data=data, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Object.objects.count(), 1)
         # Invalid Integer
         data = self.post_data.copy()
         data.update({'x': 'NaN'})
-        response = self.client.post('/api/v1/objects/', data=data)
+        response = self.client.post('/api/v1/objects/', data=data, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Object.objects.count(), 1)
 
     def test_post_object(self):
-        self.client.login(user_id='foo', password='fooPassword')
         data = self.post_data.copy()
-        response = self.client.post('/api/v1/objects/', data=data)
+        response = self.client.post('/api/v1/objects/', data=data, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Object.objects.count(), 2)
 
@@ -109,15 +104,10 @@ class PostObjectTestCase(TestCase):
         self.assertEqual(data['w'], self.post_data['w'])
 
 
-class GetObjectTestCase(TestCase):
+class GetObjectTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(
-            user_id='foo',
-            username='foo_test',
-            email='foo@test.com',
-            password='fooPassword',
-        )
+        super().setUpTestData()
         cls.dummy_user = UserFactory(
             user_id='bar',
             username='bar_test',
@@ -147,27 +137,27 @@ class GetObjectTestCase(TestCase):
 
     def test_get_object_error_not_found(self):
         # Invalid Object PK
-        self.client.login(user_id='foo', password='fooPassword')
-        response = self.client.get('/api/v1/objects/100/')
+        response = self.client.get('/api/v1/objects/100/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # Invalid User
-        self.client.login(user_id='bar', password='barPassword')
-        response = self.client.get('/api/v1/objects/1/')
+        refresh = RefreshToken.for_user(self.dummy_user)
+        wrong_user_bearer_token = {"HTTP_AUTHORIZATION":f'Bearer {refresh.access_token}'}
+
+        response = self.client.get('/api/v1/objects/1/', **wrong_user_bearer_token)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        response = self.client.get('/api/v1/objects/', {'project_name': 'foo'})
+        response = self.client.get('/api/v1/objects/', {'project_name': 'foo'}, **wrong_user_bearer_token)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_objects(self):
-        self.client.login(user_id='foo', password='fooPassword')
-        response = self.client.get('/api/v1/objects/', {'project_name': 'foo'})
+        response = self.client.get('/api/v1/objects/', {'project_name': 'foo'}, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         self.assertEqual(len(data), 5)
         for instance in data:
             self.assertEqual(instance['project_name'], 'foo')
 
-        response = self.client.get('/api/v1/objects/', {'project_name': 'no_foo'})
+        response = self.client.get('/api/v1/objects/', {'project_name': 'no_foo'}, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         self.assertEqual(len(data), 5)
@@ -175,8 +165,7 @@ class GetObjectTestCase(TestCase):
             self.assertEqual(instance['project_name'], 'no_foo')
 
     def test_get_object(self):
-        self.client.login(user_id='foo', password='fooPassword')
-        response = self.client.get('/api/v1/objects/' + str(self.objects[0].pk) + '/')
+        response = self.client.get('/api/v1/objects/' + str(self.objects[0].pk) + '/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         self.assertEqual(data['user'], self.user.pk)
@@ -195,15 +184,11 @@ class GetObjectTestCase(TestCase):
         self.assertEqual(data['w'], self.objects[0].w)
 
 
-class PatchObjectTestCase(TestCase):
+class PatchObjectTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(
-            user_id='foo',
-            username='foo_test',
-            email='foo@test.com',
-            password='fooPassword',
-        )
+        super().setUpTestData()
+
         cls.object = ObjectFactory(
             user=cls.user,
             project_name='foo',
@@ -222,49 +207,42 @@ class PatchObjectTestCase(TestCase):
         )
 
     def test_patch_object_error_not_found(self):
-        self.client.login(user_id='foo', password='fooPassword')
-        response = self.client.patch('/api/v1/objects/100/', data={})
+        response = self.client.patch('/api/v1/objects/100/', data={}, **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_patch_object_error_bad_request(self):
-        self.client.login(user_id='foo', password='fooPassword')
         # Change user
-        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'user': 'bar'}, content_type='application/json')
+        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'user': 'bar'}, content_type='application/json', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Change project
-        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'project_name': 'bar'}, content_type='application/json')
+        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'project_name': 'bar'}, content_type='application/json', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_patch_object(self):
-        self.client.login(user_id='foo', password='fooPassword')
-        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'tag': '{"patch": "test"}'}, content_type='application/json')
+        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'tag': '{"patch": "test"}'}, content_type='application/json', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['tag'], '{"patch": "test"}')
         self.assertEqual(Object.objects.count(), 1)
-        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'visibility': True}, content_type='application/json')
+        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'visibility': True}, content_type='application/json', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['visibility'], True)
         self.assertEqual(Object.objects.count(), 1)
-        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'z_index': 10}, content_type='application/json')
+        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'z_index': 10}, content_type='application/json', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['z_index'], 10)
         self.assertEqual(Object.objects.count(), 1)
-        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'svg_type': 'TE'}, content_type='application/json')
+        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'svg_type': 'TE'}, content_type='application/json', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['svg_type'], 'TE')
         self.assertEqual(Object.objects.count(), 1)
 
 
-class DeleteObjectTestCase(TestCase):
+class DeleteObjectTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = UserFactory(
-            user_id='foo',
-            username='foo_test',
-            email='foo@test.com',
-            password='fooPassword',
-        )
+        super().setUpTestData()
+    
         cls.object = ObjectFactory(
             user=cls.user,
             project_name='foo',
@@ -283,13 +261,11 @@ class DeleteObjectTestCase(TestCase):
         )
 
     def test_delete_object_error_not_found(self):
-        self.client.login(user_id='foo', password='fooPassword')
-        response = self.client.delete('/api/v1/objects/100/')
+        response = self.client.delete('/api/v1/objects/100/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_object(self):
-        self.client.login(user_id='foo', password='fooPassword')
-        response = self.client.delete('/api/v1/objects/' + str(self.object.pk) + '/')
+        response = self.client.delete('/api/v1/objects/' + str(self.object.pk) + '/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['object'].get('id'), None)
         self.assertTrue(response.json()['success'])

@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from  rest_framework_simplejwt.exceptions import TokenError
 import json
 
 from .serializer import *
@@ -79,6 +80,24 @@ class UserLoginView(APIView):
 
         return Response(status=status.HTTP_403_FORBIDDEN, data="아이디나 패스워드가 일치하지 않습니다.")
 
+class JWTRefreshView(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request, *args, **kwargs):
+        serializer = JWTRefreshSerializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+            data = serializer.validated_data
+            response = Response(
+                data=data,
+                status=status.HTTP_200_OK,
+            )
+            response.set_cookie("refresh_token", data["refresh_token"], httponly=True)
+            return response
+
+        except TokenError as e:
+            return Response(status=status.HTTP_401_UNAUTHORIZED, data="Token is invalid or expired")
 
 class CSRFCheckView(View):
     
