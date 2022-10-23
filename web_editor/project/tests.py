@@ -55,7 +55,7 @@ class PostProjectTestCase(TestCaseBase):
             "title" : "title2"
         }
         response = self.client.post("/api/v1/project/", data, **self.bearer_token)
-        print(response)
+        print(response.json())
         self.assertEqual(response.json()["writer"]["username"], "foo_test")
         self.assertEqual(response.json()["title"], "title2")
         self.assertEqual(Project.objects.count(), 2)
@@ -142,7 +142,7 @@ class PutProjectTestCase(TestCaseBase):
         id = self.project.id # Project.objects.get(title="title1").id
         data = {"title" : "title2"}
         response = self.client.put("/api/v1/project/" + str(id) + "/", data, content_type="application/json", **self.bearer_token)
-        print(response)
+        print(response.json())
         self.assertEqual(response.json()["title"], "title2")
         
     def test_update_project_updated_at(self):
