@@ -3,6 +3,7 @@ from user.models import User
 
 from rest_framework_simplejwt.tokens import RefreshToken
 from factory.django import DjangoModelFactory
+from freezegun import freeze_time
 
 class UserFactory(DjangoModelFactory):
     class Meta:
@@ -26,6 +27,8 @@ class TestCaseBase(TestCase):
             email='foo@test.com',
             password='fooPassword',
         )
-
+        
+        freezer = freeze_time("2022-02-22 00:00:00")
+        freezer.start()
         refresh = RefreshToken.for_user(cls.user)
         cls.bearer_token = {"HTTP_AUTHORIZATION":f'Bearer {refresh.access_token}'}
