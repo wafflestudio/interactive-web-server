@@ -21,7 +21,7 @@ class ProjectCreateView(APIView):
         
     def get(self, request, *args, **kwargs):
         page_number = request.query_params.get('page', 1)
-        per_page = request.query_params.get('per_page', 5)
+        per_page = request.query_params.get('per_page', 8)
         projects = Project.objects.all()
         paginator = Paginator(projects, per_page)
         page = paginator.get_page(page_number)
