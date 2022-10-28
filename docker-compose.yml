@@ -21,30 +21,33 @@ services:
   #    - ./certbot/conf:/etc/letsencrypt
   #    - ./certbot/www:/var/www/certbot
 
-  web:
+  asgi:
     build:
       context: ./web_editor
       dockerfile: web_editor.Dockerfile
-    entrypoint: ["sh", "-c"]
-    command: 
-      - |
-        gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
-        daphne -b 0.0.0.0 -p 8001 web_editor.asgi:application
+    command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./web_editor:/usr/src/app/
+    ports:
+      - 8001:8001
+    links:
+      - redis
+    expose:
+      - 8001
+  
+  wsgi:
+    build:
+      context: ./web_editor
+      dockerfile: web_editor.Dockerfile
+    command: daphne -b 0.0.0.0 -p 8001 web_editor.asgi:application
     volumes:
       - ./web_editor:/usr/src/app/
     ports:
       - 8000:8000
-      - 8001:8001
     links:
       - redis
-  
-  worker:
-    build: .
-    command: python manage.py runworker
-    volumes:
-      - ./web_editor:/usr/src/app/
-    links:
-      - redis
+    expose:
+      - 8000
 
   redis:
     container_name: redis
