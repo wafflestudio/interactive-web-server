@@ -10,6 +10,7 @@ on:
   push: 
     branches:
       - main
+      - websocket_project
 
 jobs:
   continuous-deployment:
