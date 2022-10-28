@@ -12,8 +12,7 @@ services:
       - 443:443
     depends_on:
       - web
-    #networks:
-    #  - mynetwork
+
 
   #certbot:
   #  image: certbot/certbot
@@ -38,8 +37,14 @@ services:
       - 8001:8001
     links:
       - redis
-    #networks:
-    #  - mynetwork
+  
+  worker:
+    build: .
+    command: python manage.py runworker
+    volumes:
+      - ./web_editor:/usr/src/app/
+    links:
+      - redis
 
   redis:
     container_name: redis
@@ -47,10 +52,4 @@ services:
     ports:
       - 6379:6379
     command: ["redis-server", "--bind", "redis", "--port", "6379"]
-    #networks:
-    #  - mynetwork
-   
-
-#networks:
-#  mynetwork:
-#    driver: bridge
+    

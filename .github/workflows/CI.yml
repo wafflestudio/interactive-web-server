@@ -23,6 +23,7 @@ jobs:
       DB_USER: root
       DB_HOST: "127.0.0.1"
       DB_PASSWORD: root
+      REDIS_HOST: "redis"
     
     steps:
     - uses: actions/checkout@v3
@@ -53,6 +54,7 @@ jobs:
         DB_PASSWORD : ${{ env.DB_PASSWORD }}
         DB_HOST: ${{ env.DB_HOST }}
         DB_NAME : ${{ env.DB_NAME }}
+        REDIS_HOST: ${{ env.REDIS_HOST }}
   
     - name: Move secret.json to correct directory
       run: |
