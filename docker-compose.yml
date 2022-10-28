@@ -26,7 +26,7 @@ services:
     build:
       context: ./web_editor
       dockerfile: web_editor.Dockerfile
-    command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8001 web_editor.asgi:application
     volumes:
       - ./web_editor:/usr/src/app/
     ports:
@@ -40,7 +40,7 @@ services:
     build:
       context: ./web_editor
       dockerfile: web_editor.Dockerfile
-    command: daphne -b 0.0.0.0 -p 8001 web_editor.asgi:application
+    command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./web_editor:/usr/src/app/
     ports:
