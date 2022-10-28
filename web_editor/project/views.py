@@ -2,6 +2,7 @@ from django.db import IntegrityError
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.core.paginator import Paginator
 
 from .serializer import *
 #from web_editor.wsgi import sio
@@ -20,8 +21,21 @@ class ProjectCreateView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=e)
         
     def get(self, request, *args, **kwargs):
+        page_number = request.query_params.get('page', 1)
+        per_page = request.query_params.get('per_page', 8)
         projects = Project.objects.all()
-        return Response(status=status.HTTP_200_OK, data=ProjectSerializer(projects, many=True).data)
+        paginator = Paginator(projects, per_page)
+        page = paginator.get_page(page_number)
+        page_projects = page.object_list
+        page_info = {
+            "page": {
+                "current": page.number,
+                "has_next": page.has_next(),
+                "has_previous": page.has_previous()
+            },
+            "data": ProjectSerializer(page_projects, many=True).data
+        }
+        return Response(status=status.HTTP_200_OK, data=page_info)
         
 class ProjectUpdateView(APIView):
 

@@ -5,44 +5,49 @@ services:
     build: ./nginx
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
-      #- ./data/certbot/www:/var/www/certbot
+      #- ./certbot/conf:/etc/letsencrypt
+      #- ./certbot/www:/var/www/certbot
     ports:
-      - 80:80 # 80:80
-      - 443:443 # 444:443
+      - 80:80
+      - 443:443
     depends_on:
       - web
-    networks:
-      - mynetwork
+    #networks:
+    #  - mynetwork
+
   #certbot:
-    #image: certbot/certbot
-    #entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done; '"
-    #volumes:
-     # - ./data/certbot/conf:/etc/letsencrypt
-     # - ./data/certbot/www:/var/www/certbot
+  #  image: certbot/certbot
+  #  entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done; '"
+  #  volumes:
+  #    - ./certbot/conf:/etc/letsencrypt
+  #    - ./certbot/www:/var/www/certbot
+
   web:
     build:
       context: ./web_editor
       dockerfile: web_editor.Dockerfile
-    #command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000; 
+      daphne -b 0.0.0.0 -p 8001 web_editor.asgi:application
     volumes:
       - ./web_editor:/usr/src/app/
     ports:
       - 8000:8000
-      #- 9001:9001
+      - 8001:8001
     links:
       - redis
-    networks:
-      - mynetwork
+    #networks:
+    #  - mynetwork
+
   redis:
     container_name: redis
     image: redis:latest
     ports:
       - 6379:6379
     command: ["redis-server", "--bind", "redis", "--port", "6379"]
-    networks:
-      - mynetwork
+    #networks:
+    #  - mynetwork
    
 
-networks:
-  mynetwork:
-    driver: bridge
+#networks:
+#  mynetwork:
+#    driver: bridge

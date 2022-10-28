@@ -7,6 +7,8 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from  rest_framework_simplejwt.exceptions import TokenError
 import json
 
 from .serializer import *
@@ -20,7 +22,26 @@ class UserSignUpView(APIView):
         try:
             serializer.is_valid(raise_exception=True)
             user = serializer.save()
-            return Response(status=status.HTTP_201_CREATED, data=UserCreateSerializer(user).data)
+
+            token = TokenObtainPairSerializer.get_token(user)
+            refresh_token = str(token)
+            access_token = str(token.access_token)
+            response = Response(
+                {
+                    "user": serializer.data,
+                    "message": "signup success",
+                    "token": {
+                        "access_token": access_token,
+                        "refresh_token": refresh_token
+                    },
+                },
+                status=status.HTTP_201_CREATED,
+            )
+            
+            response.set_cookie("refresh_token", refresh_token, httponly=True)
+
+            return response
+
         except ValidationError as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=e)
         except IntegrityError as e:
@@ -35,10 +56,48 @@ class UserLoginView(APIView):
         password = request.data.get('password')
         user = authenticate(request, username=user_id, password=password)
         if user:
-            login(request, user)
-            update_last_login(None, user)
-            return Response(status=status.HTTP_200_OK, data=UserSerializer(user).data)
+            #login(request, user)
+            #update_last_login(None, user)
+            
+            token = TokenObtainPairSerializer.get_token(user)
+            refresh_token = str(token)
+            access_token = str(token.access_token)
+            response = Response(
+                {
+                    "user": UserSerializer(user).data,
+                    "message": "login success",
+                    "token": {
+                        "access_token": access_token,
+                        "refresh_token": refresh_token
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+
+            response.set_cookie("refresh_token", refresh_token, httponly=True)
+
+            return response
+
         return Response(status=status.HTTP_403_FORBIDDEN, data="아이디나 패스워드가 일치하지 않습니다.")
+
+class JWTRefreshView(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request, *args, **kwargs):
+        serializer = JWTRefreshSerializer(data=request.data)
+
+        try:
+            serializer.is_valid(raise_exception=True)
+            data = serializer.validated_data
+            response = Response(
+                data=data,
+                status=status.HTTP_200_OK,
+            )
+            response.set_cookie("refresh_token", data["refresh_token"], httponly=True)
+            return response
+
+        except TokenError as e:
+            return Response(status=status.HTTP_401_UNAUTHORIZED, data="Token is invalid or expired")
 
 class CSRFCheckView(View):
     
