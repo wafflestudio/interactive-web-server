@@ -5,31 +5,28 @@ from web_editor.wsgi import *
 from .models import Project
 
 class BasicConsumer(WebsocketConsumer):
+    
     def connect(self):
         self.accept()
+        
+    def disconnect(self, close_code):
+        pass
 
 class ProjectConsumer(WebsocketConsumer):
-    def connect(self): # send id
-        # verify csrftoken
-        token = self.scope["headers"]["X-CSRFToken"]
-        if token == None:
-            self.close()
-        headers = {}
-        headers['Set-Cookie'] = 'csrf-token='+token
-
+    def connect(self): 
         self.user = self.scope["user"]
         
         # check if user is allowed to access project - How?
-        self.accept(subprotocol=(None, headers))
+        self.accept()
 
         self.project_id = self.scope['url_route']['kwargs']['pk']
+        print("project_id: ", self.project_id)
 
-        async_to_sync(self.channel_layer.group_add)("project " + self.project_id, self.channel_name)
-
+        async_to_sync(self.channel_layer.group_add)("project_" + self.project_id, self.channel_name)
 
         self.scope["session"].save()
 
-    def disconnect(self, id, close_code): # send id
+    def disconnect(self, id, close_code):
         async_to_sync(self.channel_layer.group_discard)("project" + self.project_id, self.channel_name)
 
 class ProjectCreateConsumer(WebsocketConsumer):

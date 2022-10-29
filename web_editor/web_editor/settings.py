@@ -42,7 +42,8 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.124.48.26', 'iwe-server.shop', '127.0.0.1', 'localhost', 'webgam-server.shop']
+ALLOWED_HOSTS = ['13.124.48.26', '127.0.0.1', 'localhost', 'webgam-server.shop', 
+                 'ws://localhost','ws://127.0.0.1', 'wss://webgam-server.shop']
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -62,7 +63,8 @@ INSTALLED_APPS = [
     'project',
     'object',
     'channels',
-    'django_extensions'
+    'django_extensions',
+    'django_channels_jwt_auth_middleware'
 ]
 
 MIDDLEWARE = [
@@ -73,7 +75,7 @@ MIDDLEWARE = [
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -208,7 +210,7 @@ CHANNEL_LAYERS = {
 REST_USE_JWT = True
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=20),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': False,
@@ -224,7 +226,7 @@ SIMPLE_JWT = {
 
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',
+    'USER_ID_FIELD': 'user_id',
     'USER_ID_CLAIM': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
 
