@@ -7,7 +7,7 @@ backports.zoneinfo==0.2.1
 bidict==0.22.0
 certifi==2021.10.8
 cffi==1.15.0
-channels==3.0.4
+channels==3.0.0
 channels-redis==4.0.0
 charset-normalizer==2.0.12
 configparser==5.2.0
@@ -75,6 +75,3 @@ typing-extensions==4.4.0
 uritemplate==4.1.1
 urllib3==1.26.8
 wrapt==1.13.3
-xkit==0.0.0
-zipp==1.0.0
-zope.interface==5.5.0
