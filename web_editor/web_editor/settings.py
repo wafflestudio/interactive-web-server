@@ -42,8 +42,8 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.124.48.26', '127.0.0.1', 'localhost', 'webgam-server.shop', 
-                 'ws://localhost','ws://127.0.0.1', 'wss://webgam-server.shop']
+ALLOWED_HOSTS = ['13.124.48.26', '127.0.0.1', 'localhost', 'webgam-server.shop', 'localhost:8001', '127.0.0.1:8001'
+                 'ws://localhost:8001','ws://127.0.0.1:8001', 'wss://webgam-server.shop']
 
 AUTH_USER_MODEL = 'user.User'
 
