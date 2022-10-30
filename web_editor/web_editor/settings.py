@@ -63,8 +63,7 @@ INSTALLED_APPS = [
     'project',
     'object',
     'channels',
-    'django_extensions',
-    'django_channels_jwt_auth_middleware'
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
