@@ -1,4 +1,4 @@
-asgiref==3.2.10
+asgiref==3.3.2
 async-timeout==4.0.2
 attrs==22.1.0
 autobahn==22.7.1
@@ -7,7 +7,7 @@ backports.zoneinfo==0.2.1
 bidict==0.22.0
 certifi==2021.10.8
 cffi==1.15.0
-channels==3.0.0
+channels==3.0.4
 channels-redis==4.0.0
 charset-normalizer==2.0.12
 configparser==5.2.0
@@ -18,7 +18,7 @@ cryptography==36.0.1
 daphne==3.0.2
 defusedxml==0.7.1
 Deprecated==1.2.13
-Django==3.1
+Django==3.2
 django-allauth==0.49.0
 django-cors-headers==3.11.0
 django-extensions==3.1.0
