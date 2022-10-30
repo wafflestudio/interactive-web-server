@@ -18,16 +18,17 @@ django_asgi_app = get_asgi_application()
 from channels.routing import ProtocolTypeRouter, URLRouter
 from .middleware import JwtAuthMiddlewareStack
 import project.routing
-from channels.security.websocket import AllowedHostsOriginValidator
+from channels.security.websocket import AllowedHostsOriginValidator, OriginValidator
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": AllowedHostsOriginValidator(
+    "websocket": OriginValidator(
         JwtAuthMiddlewareStack(
             URLRouter([
                 *project.routing.websocket_urlpatterns,
             ])
-        )        
+        ),
+        ["webgam-server.shop"]        
     )
     }
 )
