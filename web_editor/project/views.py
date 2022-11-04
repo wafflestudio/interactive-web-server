@@ -8,6 +8,8 @@ from .serializer import *
 #from web_editor.wsgi import sio
 # Create your views here.
 class ProjectCreateView(APIView):
+    
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
     def post(self, request, *args, **kwargs):
         data = request.data.copy()

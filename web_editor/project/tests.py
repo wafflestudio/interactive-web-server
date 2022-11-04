@@ -112,7 +112,7 @@ class GetProjectTestCase(TestCaseBase):
         self.assertEqual(len(response.json()), 0)
 
     def test_get_project_list(self):
-        response = self.client.get("/api/v1/project/", **self.bearer_token)
+        response = self.client.get("/api/v1/project/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
         
