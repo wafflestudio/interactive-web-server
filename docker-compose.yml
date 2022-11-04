@@ -11,7 +11,9 @@ services:
       - 80:80
       - 443:443
     depends_on:
-      - web
+      - wsgi
+      - asgi
+
 
   #certbot:
   #  image: certbot/certbot
@@ -20,12 +22,38 @@ services:
   #    - ./certbot/conf:/etc/letsencrypt
   #    - ./certbot/www:/var/www/certbot
 
-  web:
+  asgi:
     build:
       context: ./web_editor
       dockerfile: web_editor.Dockerfile
-    #command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8001 web_editor.asgi:application
+    volumes:
+      - ./web_editor:/usr/src/app/
+    ports:
+      - 8001:8001
+    links:
+      - redis
+    expose:
+      - 8001
+  
+  wsgi:
+    build:
+      context: ./web_editor
+      dockerfile: web_editor.Dockerfile
+    command: gunicorn web_editor.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - ./web_editor:/usr/src/app/
     ports:
       - 8000:8000
+    links:
+      - redis
+    expose:
+      - 8000
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    command: ["redis-server", "--bind", "redis", "--port", "6379"]
+    

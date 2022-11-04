@@ -10,8 +10,7 @@ on:
   push: 
     branches:
       - main
-      - waffle-server-migration
-      # - ci-cd
+      - 'websocket_project'
 
 jobs:
   continuous-deployment:

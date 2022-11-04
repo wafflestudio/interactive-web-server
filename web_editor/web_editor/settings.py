@@ -42,7 +42,8 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.124.48.26', 'iwe-server.shop', '127.0.0.1', 'localhost', 'webgam-server.shop']
+ALLOWED_HOSTS = ['13.124.48.26', '127.0.0.1', 'localhost', 'webgam-server.shop',
+                 'ws://localhost:8000','ws://127.0.0.1:8000', 'wss://webgam-server.shop']
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -61,17 +62,19 @@ INSTALLED_APPS = [
     'user',
     'project',
     'object',
+    'channels',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'web_editor.middleware.SyncCorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -113,6 +116,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'web_editor.wsgi.application'
+ASGI_APPLICATION = "web_editor.asgi.application"
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -187,10 +192,24 @@ REST_FRAMEWORK = {
     ],
 }
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(get_secret('REDIS_HOST'), 6379)],
+        },
+    },
+}
+
+#GRAPH_MODELS = {
+#  'all_applications': True,
+#  'group_models': True,
+#}
+
 REST_USE_JWT = True
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=20),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': False,
@@ -206,7 +225,7 @@ SIMPLE_JWT = {
 
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',
+    'USER_ID_FIELD': 'user_id',
     'USER_ID_CLAIM': 'user_id',
     'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
 
