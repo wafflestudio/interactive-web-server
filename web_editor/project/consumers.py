@@ -9,7 +9,7 @@ from object.models import Object
 from object.serializer import ObjectSerializer
 from common.websocket_template import WebsocketTemplate
 from channels.db import database_sync_to_async
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, MethodNotAllowed
 
 class BasicConsumer(JsonWebsocketConsumer):
     # for testing connection
@@ -55,19 +55,24 @@ class ProjectConsumer(JsonWebsocketConsumer):
     def send_objects(self):
         objects = self.get_project_objects() #await sync_to_async(list)(query)
         data = ObjectSerializer(objects, many=True).data
-        # where to put query params?
-        message = WebsocketTemplate.construct_message("POST", "/objects/", data)
+        message = WebsocketTemplate.construct_message(method="GET", endpoint="/objects/", data=data)
         self.send_json(message)
         
     def receive_json(self, request):
         # TODO refactor (make parse function in websocket_template)
         print("receive json function")
         method = request.get("method", None)
-        endpoint = request.get("endpoint", None)
+        endpoint = request.get("endpoint", "/")
+        url_params = request.get("url_params", {})
+        query_params = request.get("query_params", {})
         data = request.get("data", None)
         
         if method == "POST" and endpoint == "/objects/":
             self.create_object(data)
+        elif method == "PATCH" and endpoint == "/objects/" and "id" in url_params:
+            self.edit_object(url_params["id"], data)
+        elif method == "DELETE" and endpoint == "/objects/" and "id" in url_params:
+            self.delete_object(url_params["id"], data)
     
     def create_object(self, data):
         print("create object function")
@@ -77,10 +82,52 @@ class ProjectConsumer(JsonWebsocketConsumer):
         try:
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            message = WebsocketTemplate.construct_message("POST", "/objects/", serializer.data)
+            message = WebsocketTemplate.construct_message(method="POST", endpoint="/objects/", data=serializer.data)
             self.broadcast("room.message", message)
-        except ValidationError as e:
+        except (ValidationError, MethodNotAllowed) as e:
             self.send_json({"error": e.detail})
+        
+        
+    def edit_object(self, id, data):
+        instance = Object.objects.get_or_none(id=id, user=self.user)
+        if instance is None:
+            self.send_json({"error":"No object corresponding to id."})
+            return
+        if data.get('user', None) is not None:
+            self.send_json({"error":"Changing object owner is not allowed."})
+            return
+        if data.get('project_name', None) is not None:
+            self.send_json({"error": "Changing object's project is not allowed."})
+            return
+        serializer = ObjectSerializer(instance, data=data, partial=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+            serializer.update(instance, serializer.validated_data)
+            message = WebsocketTemplate.construct_message(
+                method="PATCH", endpoint="/objects/", url_params={"id": id}, data=serializer.data
+                )
+            self.broadcast("room.message", message)
+        except (ValidationError, MethodNotAllowed) as e:
+            self.send_json({"error": e.detail})
+        
+        
+    def delete_object(self, id, data):
+        # TODO
+        instance = Object.objects.get_or_none(id=id, user=self.user)
+        if instance is None:
+            return self.send_json({"error": "No object corresponding to id."})
+
+        instance.delete()
+        data = {"success": True, "object": ObjectSerializer(instance).data}
+        
+        try:
+            message = WebsocketTemplate.construct_message(
+                method="DELETE", endpoint="/objects/", url_params={"id": id}, data=data
+                )
+            self.broadcast("room.message", message)
+        except MethodNotAllowed as e:
+            self.send_json({"error": e.detail})
+    
     
     def broadcast(self, type, message):
         print("broadcast function")
