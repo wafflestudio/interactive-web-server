@@ -6,7 +6,7 @@ import json
 from web_editor.wsgi import *
 from .models import Project
 from object.models import Object
-from object.serializer import ObjectSerializer
+from object.serializer import ObjectSerializer, ObjectCreateSerializer, ObjectUpdateSerializer
 from common.websocket_template import WebsocketTemplate
 from channels.db import database_sync_to_async
 from rest_framework.exceptions import ValidationError, MethodNotAllowed, NotFound
@@ -86,11 +86,11 @@ class ProjectConsumer(JsonWebsocketConsumer):
     def create_object(self, data):
         data['user'] = self.user.id
         data['project'] = self.project_id
-        serializer = ObjectSerializer(data=data)
+        serializer = ObjectCreateSerializer(data=data)
         try:
             serializer.is_valid(raise_exception=True)
-            serializer.save()
-            message = WebsocketTemplate.construct_message(method="POST", endpoint="/objects/", data=serializer.data)
+            instance = serializer.save()
+            message = WebsocketTemplate.construct_message(method="POST", endpoint="/objects/", data=ObjectSerializer(instance).data)
             self.broadcast("room.message", message)
         except ValidationError as e:
             self.send_json({"error": e.detail})
@@ -107,12 +107,12 @@ class ProjectConsumer(JsonWebsocketConsumer):
         if data.get('project_name', None) is not None:
             self.send_json({"error": "Changing object's project is not allowed."})
             return
-        serializer = ObjectSerializer(instance, data=data, partial=True)
+        serializer = ObjectUpdateSerializer(instance, data=data, partial=True)
         try:
             serializer.is_valid(raise_exception=True)
             serializer.update(instance, serializer.validated_data)
             message = WebsocketTemplate.construct_message(
-                method="PATCH", endpoint="/objects/", url_params={"id": id}, data=serializer.data
+                method="PATCH", endpoint="/objects/", url_params={"id": id}, data=ObjectSerializer(instance).data
                 )
             self.broadcast("room.message", message)
         except ValidationError as e:
