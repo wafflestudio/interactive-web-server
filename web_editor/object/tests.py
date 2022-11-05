@@ -4,6 +4,7 @@ from rest_framework import status
 
 from object.models import Object
 from user.tests import UserFactory
+from project.tests import ProjectFactory
 from common.testcase import TestCaseBase
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -23,8 +24,15 @@ class PostObjectTestCase(TestCaseBase):
     def setUpTestData(cls):
         super().setUpTestData()
 
+        project_data = {
+            "title" : "foo",
+            "writer" : cls.user
+        }
+        cls.project = ProjectFactory(**project_data)
+        
         cls.object = ObjectFactory(
             user=cls.user,
+            project=cls.project,
             project_name='foo',
             tag={},
             visibility=True,
@@ -108,17 +116,32 @@ class GetObjectTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        
         cls.dummy_user = UserFactory(
             user_id='bar',
             username='bar_test',
             email='bar@test.com',
             password='barPassword',
         )
+        
+        dummy_project_data = {
+            "title": "no_foo",
+            "writer": cls.user
+        }
+        cls.dummy_project = ProjectFactory(**dummy_project_data)
+        
+        project_data = {
+            "title" : "foo",
+            "writer" : cls.user
+        }
+        cls.project = ProjectFactory(**project_data)
+        
         cls.objects = []
         for i in range(10):
             cls.objects.append(
                 ObjectFactory(
                     user=cls.user,
+                    project = cls.project if i < 5 else cls.dummy_project,
                     project_name='foo' if i < 5 else 'no_foo',
                     tag={},
                     visibility=True,
@@ -188,9 +211,16 @@ class PatchObjectTestCase(TestCaseBase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+        
+        project_data = {
+            "title" : "foo",
+            "writer" : cls.user
+        }
+        cls.project = ProjectFactory(**project_data)
 
         cls.object = ObjectFactory(
             user=cls.user,
+            project=cls.project,
             project_name='foo',
             tag={},
             visibility=True,
@@ -243,8 +273,15 @@ class DeleteObjectTestCase(TestCaseBase):
     def setUpTestData(cls):
         super().setUpTestData()
     
+        project_data = {
+            "title" : "foo",
+            "writer" : cls.user
+        }
+        cls.project = ProjectFactory(**project_data)
+        
         cls.object = ObjectFactory(
             user=cls.user,
+            project=cls.project,
             project_name='foo',
             tag={},
             visibility=True,
