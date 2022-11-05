@@ -3,12 +3,14 @@ from django.db import models
 from common.common import CustomModelManager
 from common.models import TimeModel
 from user.models import User
+from project.models import Project
 
 
 class Object(TimeModel):
     objects = CustomModelManager()
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     project_name = models.CharField(max_length=100)
     tag = models.JSONField(default=dict)
     visibility = models.BooleanField(default=True)
