@@ -24,7 +24,7 @@ chardet==3.0.4
 charset-normalizer==2.0.12
 Click==7.0
 colorama==0.4.3
-command-not-found==0.3
+#command-not-found==0.3
 configparser==5.2.0
 constantly==15.1.0
 cookiecutter==2.1.1
