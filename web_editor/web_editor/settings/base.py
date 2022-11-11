@@ -17,7 +17,7 @@ import pymysql
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
 secret_file = os.path.join(BASE_DIR, 'secret.json')
 
@@ -63,7 +63,8 @@ INSTALLED_APPS = [
     'project',
     'object',
     'channels',
-    'django_extensions'
+    'django_extensions',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -201,19 +202,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-AWS_ACCESS_KEY_ID = get_secret("AWS_ACCESS_KEY")
-AWS_SECRET_ACCESS_KEY = get_secret("AWS_SECRET_KEY")
-AWS_REGION = get_secret("AWS_REGION")
-
-AWS_STORAGE_BUCKET_NAME = get_secret("AWS_STORAGE_BUCKET_NAME")
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (
-    AWS_STORAGE_BUCKET_NAME, AWS_REGION)
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
 #GRAPH_MODELS = {
 #  'all_applications': True,
 #  'group_models': True,
