@@ -15,7 +15,7 @@ binaryornot==0.4.4
 blinker==1.4
 boto3==1.26.7
 botocore==1.29.7
-Brlapi==0.7.0
+#Brlapi==0.7.0
 certifi==2021.10.8
 cffi==1.15.0
 channels==3.0.4
