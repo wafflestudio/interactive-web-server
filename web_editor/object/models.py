@@ -1,9 +1,10 @@
 from django.db import models
 
-from common.common import CustomModelManager
+from common.common import CustomModelManager, file_upload_path
 from common.models import TimeModel
 from user.models import User
 from project.models import Project
+from web_editor.storage_backends import MediaStorage
 
 
 class Object(TimeModel):
@@ -19,28 +20,12 @@ class Object(TimeModel):
     z_index = models.IntegerField()
     opacity = models.FloatField(default=1.0)
 
-    #RECTANGLE = 'RE'
-    #ELLIPSE = 'EL'
-    #PATH = 'PA'
-    #DRAWING = 'DR'
-    #IMAGE = 'IM'
-    #TEXT = 'TE'
-    #SVG_TYPE_CHOICES = [
-    #    (RECTANGLE, 'Rectangle'),
-    #    (ELLIPSE, 'Ellipse'),
-    #    (PATH, 'Path'),
-    #    (DRAWING, 'Drawing'),
-    #    (IMAGE, 'Image'),
-    #    (TEXT, 'Text'),
-    #]
-    #svg_type = models.CharField(max_length=2, choices=SVG_TYPE_CHOICES)
-    #fill = models.CharField(max_length=30)
-    #stroke = models.CharField(max_length=30)
-    #d_string = models.CharField(max_length=500)
     src_url = models.URLField()
 
     x = models.IntegerField()
     y = models.IntegerField()
     w = models.IntegerField()
     h = models.IntegerField()
+    
+    image = models.FileField(storage=MediaStorage(), upload_to=file_upload_path, blank=True)
 

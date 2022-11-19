@@ -4,8 +4,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['13.124.48.26', 'webgam-server.shop', 'wss://webgam-server.shop']
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'web_editor.storage_backends.MediaStorage'
+STATICFILES_STORAGE = 'web_editor.storage_backends.BuildStorage'
 
 AWS_ACCESS_KEY_ID = get_secret("AWS_ACCESS_KEY")
 AWS_SECRET_ACCESS_KEY = get_secret("AWS_SECRET_KEY")
