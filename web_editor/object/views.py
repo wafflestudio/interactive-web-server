@@ -9,7 +9,6 @@ from project.models import Project
 
 
 class ObjectViewSet(GenericViewSet):
-    #serializer_class = ObjectSerializer
     queryset = Object.objects.all()
 
     def create(self, request):
