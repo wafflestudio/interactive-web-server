@@ -17,7 +17,7 @@ import pymysql
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
+BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
 secret_file = os.path.join(BASE_DIR, 'secret.json')
 
@@ -63,7 +63,8 @@ INSTALLED_APPS = [
     'project',
     'object',
     'channels',
-    'django_extensions'
+    'django_extensions',
+    'storages'
 ]
 
 MIDDLEWARE = [

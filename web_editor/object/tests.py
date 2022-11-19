@@ -31,16 +31,18 @@ class PostObjectTestCase(TestCaseBase):
         cls.project = ProjectFactory(**project_data)
         
         cls.object = ObjectFactory(
+            object_name='sample',
             user=cls.user,
             project=cls.project,
             project_name='foo',
             tag={},
             visibility=True,
             z_index=0,
-            svg_type=Object.PATH,
-            fill='dummy_fill',
-            stroke='dummy_stroke',
-            d_string='dummy_d_string',
+            #svg_type=Object.PATH,
+            #fill='dummy_fill',
+            #stroke='dummy_stroke',
+            #d_string='dummy_d_string',
+            opacity=0.5,
             src_url='https://dummy.com/image-source',
             x=0,
             y=0,
@@ -48,14 +50,16 @@ class PostObjectTestCase(TestCaseBase):
             h=0,
         )
         cls.post_data = {
+            'object_name':'sample',
             'project_name': 'foo',
             'tag': '{"size": "3", "0": "string", "1": "array", "2": "test", "test": "success"}',
             'visibility': True,
             'z_index': 5,
-            'svg_type': 'RE',
-            'fill': 'rgba(255,255,255,0)',
-            'stroke': 'rgba(255,255,255,0)',
-            'd_string': 'M10 10 H 90 V 90 H 10 L 10 10',
+            #'svg_type': 'RE',
+            #'fill': 'rgba(255,255,255,0)',
+            #'stroke': 'rgba(255,255,255,0)',
+            #'d_string': 'M10 10 H 90 V 90 H 10 L 10 10',
+            'opacity':0.5,
             'src_url': 'https://webgam.com/dummy-image-source-url',
             'x': 100,
             'y': -100,
@@ -71,11 +75,11 @@ class PostObjectTestCase(TestCaseBase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Object.objects.count(), 1)
         # Invalid Svg type
-        data = self.post_data.copy()
-        data.update({'svg_type': 'Rectangle'})
-        response = self.client.post('/api/v1/objects/', data=data, **self.bearer_token)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(Object.objects.count(), 1)
+        #data = self.post_data.copy()
+        #data.update({'svg_type': 'Rectangle'})
+        #response = self.client.post('/api/v1/objects/', data=data, **self.bearer_token)
+        #self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        #self.assertEqual(Object.objects.count(), 1)
         # Invalid Source URL
         data = self.post_data.copy()
         data.update({'src_url': 'image'})
@@ -96,15 +100,17 @@ class PostObjectTestCase(TestCaseBase):
         self.assertEqual(Object.objects.count(), 2)
 
         data = response.json()
+        self.assertEqual(data['object_name'], self.post_data['object_name'])
         self.assertEqual(data['user'], self.user.pk)
         self.assertEqual(data['project_name'], self.post_data['project_name'])
         self.assertEqual(data['tag'], {'size': '3', '0': 'string', '1': 'array', '2': 'test', 'test': 'success'})
         self.assertEqual(data['visibility'], self.post_data['visibility'])
         self.assertEqual(data['z_index'], self.post_data['z_index'])
-        self.assertEqual(data['svg_type'], self.post_data['svg_type'])
-        self.assertEqual(data['fill'], self.post_data['fill'])
-        self.assertEqual(data['stroke'], self.post_data['stroke'])
-        self.assertEqual(data['d_string'], self.post_data['d_string'])
+        #self.assertEqual(data['svg_type'], self.post_data['svg_type'])
+        #self.assertEqual(data['fill'], self.post_data['fill'])
+        #self.assertEqual(data['stroke'], self.post_data['stroke'])
+        #self.assertEqual(data['d_string'], self.post_data['d_string'])
+        self.assertEqual(data['opacity'], self.post_data['opacity'])
         self.assertEqual(data['src_url'], self.post_data['src_url'])
         self.assertEqual(data['x'], self.post_data['x'])
         self.assertEqual(data['y'], self.post_data['y'])
@@ -140,16 +146,18 @@ class GetObjectTestCase(TestCaseBase):
         for i in range(10):
             cls.objects.append(
                 ObjectFactory(
+                    object_name = 'sample',
                     user=cls.user,
                     project = cls.project if i < 5 else cls.dummy_project,
                     project_name='foo' if i < 5 else 'no_foo',
                     tag={},
                     visibility=True,
                     z_index=0,
-                    svg_type=Object.PATH,
-                    fill='dummy_fill',
-                    stroke='dummy_stroke',
-                    d_string='dummy_d_string',
+                    #svg_type=Object.PATH,
+                    #fill='dummy_fill',
+                    #stroke='dummy_stroke',
+                    #d_string='dummy_d_string',
+                    opacity=0.5,
                     src_url='https://dummy.com/image-source',
                     x=0,
                     y=0,
@@ -191,15 +199,17 @@ class GetObjectTestCase(TestCaseBase):
         response = self.client.get('/api/v1/objects/' + str(self.objects[0].pk) + '/', **self.bearer_token)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
+        self.assertEqual(data['object_name'], self.objects[0].object_name)
         self.assertEqual(data['user'], self.user.pk)
         self.assertEqual(data['project_name'], self.objects[0].project_name)
         self.assertEqual(data['tag'], self.objects[0].tag)
         self.assertEqual(data['visibility'], self.objects[0].visibility)
         self.assertEqual(data['z_index'], self.objects[0].z_index)
-        self.assertEqual(data['svg_type'], self.objects[0].svg_type)
-        self.assertEqual(data['fill'], self.objects[0].fill)
-        self.assertEqual(data['stroke'], self.objects[0].stroke)
-        self.assertEqual(data['d_string'], self.objects[0].d_string)
+        #self.assertEqual(data['svg_type'], self.objects[0].svg_type)
+        #self.assertEqual(data['fill'], self.objects[0].fill)
+        #self.assertEqual(data['stroke'], self.objects[0].stroke)
+        #self.assertEqual(data['d_string'], self.objects[0].d_string)
+        self.assertEqual(data['opacity'], self.objects[0].opacity)
         self.assertEqual(data['src_url'], self.objects[0].src_url)
         self.assertEqual(data['x'], self.objects[0].x)
         self.assertEqual(data['y'], self.objects[0].y)
@@ -219,16 +229,18 @@ class PatchObjectTestCase(TestCaseBase):
         cls.project = ProjectFactory(**project_data)
 
         cls.object = ObjectFactory(
+            object_name='sample',
             user=cls.user,
             project=cls.project,
             project_name='foo',
             tag={},
             visibility=True,
             z_index=0,
-            svg_type=Object.PATH,
-            fill='dummy_fill',
-            stroke='dummy_stroke',
-            d_string='dummy_d_string',
+            #svg_type=Object.PATH,
+            #fill='dummy_fill',
+            #stroke='dummy_stroke',
+            #d_string='dummy_d_string',
+            opacity=0.5,
             src_url='https://dummy.com/image-source',
             x=0,
             y=0,
@@ -262,10 +274,10 @@ class PatchObjectTestCase(TestCaseBase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['z_index'], 10)
         self.assertEqual(Object.objects.count(), 1)
-        response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'svg_type': 'TE'}, content_type='application/json', **self.bearer_token)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['svg_type'], 'TE')
-        self.assertEqual(Object.objects.count(), 1)
+        #response = self.client.patch('/api/v1/objects/' + str(self.object.pk) + '/', data={'svg_type': 'TE'}, content_type='application/json', **self.bearer_token)
+        #self.assertEqual(response.status_code, status.HTTP_200_OK)
+        #self.assertEqual(response.json()['svg_type'], 'TE')
+        #self.assertEqual(Object.objects.count(), 1)
 
 
 class DeleteObjectTestCase(TestCaseBase):
@@ -280,16 +292,18 @@ class DeleteObjectTestCase(TestCaseBase):
         cls.project = ProjectFactory(**project_data)
         
         cls.object = ObjectFactory(
+            object_name='sample',
             user=cls.user,
             project=cls.project,
             project_name='foo',
             tag={},
             visibility=True,
             z_index=0,
-            svg_type=Object.PATH,
-            fill='dummy_fill',
-            stroke='dummy_stroke',
-            d_string='dummy_d_string',
+            #svg_type=Object.PATH,
+            #fill='dummy_fill',
+            #stroke='dummy_stroke',
+            #d_string='dummy_d_string',
+            opacity=0.5,
             src_url='https://dummy.com/image-source',
             x=0,
             y=0,
