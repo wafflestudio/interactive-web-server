@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['13.124.48.26', 'webgam-server.shop', 'wss://webgam-server.shop']
 
