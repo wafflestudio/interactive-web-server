@@ -135,4 +135,5 @@ data/certbot
 mysql_secret
 
 .vscode/
+.idea/
 media/

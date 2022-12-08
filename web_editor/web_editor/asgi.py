@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 
 import os
 import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web_editor.settings.prod')
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'web_editor.settings.dev')
 django.setup()
 
 from django.core.asgi import get_asgi_application
@@ -22,13 +23,12 @@ from channels.security.websocket import AllowedHostsOriginValidator, OriginValid
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": AllowedHostsOriginValidator(
+    "websocket": # AllowedHostsOriginValidator(
         JwtAuthMiddlewareStack(
             URLRouter([
                 *project.routing.websocket_urlpatterns,
             ])
-        )
+        # )
         #["wss://webgam-server.shop", "ws://127.0.0.1:8000", "ws://localhost:8000"]        
     )
-    }
-)
+})

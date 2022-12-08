@@ -1,40 +1,49 @@
-name: Django CD
+name: Deploy
 
 on:
   #workflow_run:
-    #workflows: [Django CI]
+    #workflows: [Test CI]
     #branches: 
       #- main
     #types:
       #- completed
-  push: 
+  push:
     branches:
       - main
-      - 'websocket_project'
 
 jobs:
   continuous-deployment:
+    name: Deploy
     runs-on: ubuntu-latest
     #if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    
+    env:
+      IMAGE_TAG: ${{ github.run_number }}
+      BUILD_NUMBER: ${{ github.run_number }}
+      ECR_REGISTRY: 405906814034.dkr.ecr.ap-northeast-2.amazonaws.com
+      ECR_REPOSITORY: webgam-dev/webgam-server
+
     steps:
       # Step 1
       - name: Checkout
         uses: actions/checkout@v2 
-        
-      # Step 2    
+
+      # Step 2
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
-        with: 
+        with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
       # Step 3
-      - name: Create CodeDeploy Deployment
-        id: deploy
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Step 4
+      - name: Docker Build, tag, and push image to ECR
+        id: build-image
         run: |
-          aws deploy create-deployment \
-          --application-name webgam-deploy \
-          --deployment-group-name webgam-dev \
-          --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
