@@ -14,5 +14,3 @@ DATABASES = {
 }
 
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
-MEDIA_ROOT = '/home/gahyun/interactive-web-server/media'
