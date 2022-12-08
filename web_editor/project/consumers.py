@@ -15,7 +15,6 @@ class BasicConsumer(JsonWebsocketConsumer):
     # for testing connection
     
     def connect(self):
-        print("!!!")
         self.accept()
         
     def disconnect(self, close_code):

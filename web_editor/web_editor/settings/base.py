@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import json
+import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -24,6 +25,8 @@ SECRETS_MANAGER = boto3.client("secretsmanager", region_name="ap-northeast-2")
 
 
 def get_secret(key):
+    if os.getenv("DJANGO_SETTINGS_MODULE") == "web_editor.settings.test":
+        return "test"
     credential = SECRETS_MANAGER.get_secret_value(SecretId="dev/webgam-server")
     return json.loads(credential["SecretString"])[key]
 
@@ -193,7 +196,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": ['redis://host.docker.internal:6379/1?encoding=utf-8'],
+            "hosts": [(get_secret('REDIS_HOST'))],
         },
     },
 }

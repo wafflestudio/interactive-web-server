@@ -1,9 +1,6 @@
 name: Test CI
 
 on:
-  push:
-    branches: 
-      - '**'  
   pull_request:
     branches: [ main ]
 
@@ -30,9 +27,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run migrations
-      run: python web_editor/manage.py migrate
-    - name: Run Tests
+    - name: Setup MySQL
       run: |
-        python manage.py test
+        sudo service mysql start
+        mysql -e 'CREATE DATABASE test_db;' -uroot -proot
+        mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
+
+    - name: Run Tests
+      run: DJANGO_SETTINGS_MODULE=web_editor.settings.test python manage.py test
       working-directory: web_editor
