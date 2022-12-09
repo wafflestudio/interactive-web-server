@@ -23,12 +23,12 @@ from channels.security.websocket import AllowedHostsOriginValidator, OriginValid
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
-    "websocket": # AllowedHostsOriginValidator(
+    "websocket": AllowedHostsOriginValidator(
         JwtAuthMiddlewareStack(
             URLRouter([
                 *project.routing.websocket_urlpatterns,
             ])
-        # )
+        )
         #["wss://webgam-server.shop", "ws://127.0.0.1:8000", "ws://localhost:8000"]        
     )
 })
