@@ -1,6 +1,6 @@
 from .base import *
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['webgam-api-dev.wafflestudio.com', 'wss://webgam-api-dev.wafflestudio.com']
 
