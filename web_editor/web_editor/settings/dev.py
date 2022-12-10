@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['webgam-api.wafflestudio.com', 'wss://webgam-api.wafflestudio.com']
+ALLOWED_HOSTS = ['webgam-api-dev.wafflestudio.com', 'wss://webgam-api-dev.wafflestudio.com']
 
 DEFAULT_FILE_STORAGE = 'web_editor.storage_backends.MediaStorage'
 STATICFILES_STORAGE = 'web_editor.storage_backends.BuildStorage'

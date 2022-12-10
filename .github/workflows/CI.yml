@@ -1,9 +1,6 @@
-name: Django CI
+name: Test CI
 
 on:
-  push:
-    branches: 
-      - '**'  
   pull_request:
     branches: [ main ]
 
@@ -16,15 +13,7 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [3.8]
-    
-    env:
-      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }} 
-      DB_NAME: test_db
-      DB_USER: root
-      DB_HOST: "127.0.0.1"
-      DB_PASSWORD: root
-      REDIS_HOST: "redis"
-    
+
     steps:
     - uses: actions/checkout@v3
     
@@ -36,33 +25,14 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r web_editor/requirements.txt
-        
-    - name: Verify MySQL connection
+        pip install -r requirements.txt
+
+    - name: Setup MySQL
       run: |
         sudo service mysql start
-        mysql -e 'CREATE DATABASE ${{ env.DB_NAME }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        mysql -e 'CREATE DATABASE test_db;' -uroot -proot
         mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES"
-        
-    - name: Create secret.json file
-      uses: schdck/create-env-json@v1
-      id: create-env
-      with:
-        file-name: 'secret.json'
-        SECRET_KEY: ${{ env.SECRET_KEY }}
-        DB_USER : ${{ env.DB_USER }}
-        DB_PASSWORD : ${{ env.DB_PASSWORD }}
-        DB_HOST: ${{ env.DB_HOST }}
-        DB_NAME : ${{ env.DB_NAME }}
-        REDIS_HOST: ${{ env.REDIS_HOST }}
-  
-    - name: Move secret.json to correct directory
-      run: |
-        mv ${{ steps.create-env.outputs.full-path }} web_editor/
-        
-    - name: Run migrations
-      run: python web_editor/manage.py migrate
+
     - name: Run Tests
-      run: |
-        python manage.py test
+      run: DJANGO_SETTINGS_MODULE=web_editor.settings.test python manage.py test
       working-directory: web_editor

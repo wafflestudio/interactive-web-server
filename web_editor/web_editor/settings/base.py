@@ -10,40 +10,39 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-from pathlib import Path
-import os, json
-from django.core.exceptions import ImproperlyConfigured
-import pymysql
+import json
+import os
 from datetime import timedelta
+from pathlib import Path
+
+import boto3
+import pymysql
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 
-secret_file = os.path.join(BASE_DIR, 'secret.json')
-
-with open(secret_file) as f:
-    secrets = json.loads(f.read())
+SECRETS_MANAGER = boto3.client("secretsmanager", region_name="ap-northeast-2")
 
 
-def get_secret(setting, secrets=secrets):
-    try:
-        return secrets[setting]
-    except KeyError:
-        error_msg = "Set the {} environment variable".format(setting)
-        raise ImproperlyConfigured(error_msg)
+def get_secret(key):
+    if os.getenv("DJANGO_SETTINGS_MODULE") == "web_editor.settings.test":
+        return "test"
+    credential = SECRETS_MANAGER.get_secret_value(SecretId="dev/webgam-server")
+    return json.loads(credential["SecretString"])[key]
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = get_secret("SECRET_KEY")
+SECRET_KEY = get_secret("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.124.48.26', '127.0.0.1', 'localhost', 'webgam-server.shop',
-                 'ws://localhost:8000','ws://127.0.0.1:8000', 'wss://webgam-server.shop']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'ws://localhost:8000', 'ws://127.0.0.1:8000',
+                 'webgam-api-dev.wafflestudio.com', 'wss://webgam-api-dev.wafflestudio.com',
+                 'webgam-api.wafflestudio.com', 'wss://webgam-api.wafflestudio.com']
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -197,7 +196,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(get_secret('REDIS_HOST'), 6379)],
+            "hosts": [(get_secret('REDIS_HOST'))],
         },
     },
 }
